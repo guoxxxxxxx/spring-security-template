@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "tb_auth_user")
-public class LoginUserInfo implements UserDetails {
+public class LoginUserInfo implements UserDetails, CredentialsContainer {
 
     /**
      * 主键
@@ -43,7 +44,7 @@ public class LoginUserInfo implements UserDetails {
     private String password;
 
     /**
-     * 权限
+     * 角色id
      */
     private Long roleId;
 
@@ -68,9 +69,9 @@ public class LoginUserInfo implements UserDetails {
     private Boolean enable;
 
     /**
-     * 角色名称
+     * 角色权限列表
      */
-    private String roleName;
+    private String authorities;
 
     @Override
     public boolean isAccountNonExpired() {
@@ -94,8 +95,15 @@ public class LoginUserInfo implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
-        List<GrantedAuthority> role = new ArrayList<>();
-        role.add(new SimpleGrantedAuthority(roleName));
-        return role;
+        List<GrantedAuthority> authorityList = new ArrayList<>();
+        for (String authority : authorities.split(",")) {
+            authorityList.add(new SimpleGrantedAuthority(authority));
+        }
+        return authorityList;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 }

@@ -33,4 +33,10 @@ public class TbAuthRole {
      */
     @Column(name = "name")
     private String name;
+
+    /**
+     * 所拥有的权限
+     */
+    @Column(name = "authorities")
+    private String authorities;
 }

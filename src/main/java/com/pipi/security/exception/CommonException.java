@@ -5,15 +5,12 @@
  * @Description:
  */
 
-package com.pipi.security.common;
+package com.pipi.security.exception;
 
-import lombok.Data;
 
-@Data
 public class CommonException extends RuntimeException{
 
     public CommonException(String message){
         super(message);
     }
-    
 }

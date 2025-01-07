@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan("com.pipi.security.config")
+@ComponentScan({"com.pipi.security.config", "com.pipi.security.filter", "com.pipi.security.*"})
 public class SecurityServiceApplication {
 
     public static void main(String[] args) {

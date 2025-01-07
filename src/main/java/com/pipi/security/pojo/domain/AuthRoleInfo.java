@@ -24,4 +24,9 @@ public class AuthRoleInfo {
      * 用户角色名称
      */
     private String name;
+
+    /**
+     * 所拥有的权限
+     */
+    private String authorities;
 }

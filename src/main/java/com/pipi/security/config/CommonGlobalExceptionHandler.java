@@ -7,8 +7,9 @@
 
 package com.pipi.security.config;
 
-import com.pipi.security.common.CommonException;
+import com.pipi.security.exception.CommonException;
 import com.pipi.security.common.CommonResult;
+import com.pipi.security.exception.InnerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +42,25 @@ public class CommonGlobalExceptionHandler {
     }
 
 
+    /**
+     * 公共异常, 向用户展示message中的信息
+     * @param e
+     * @return
+     */
     @ExceptionHandler(CommonException.class)
     public CommonResult handleCommonException(CommonException e){
         return new CommonResult().status(456).message(e.getMessage());
+    }
+
+
+    /**
+     * 内部意义, 不向用户展示，通知前端该进行什么样的操作
+     * @param e InnerException
+     * @return CommonResult
+     */
+    @ExceptionHandler(InnerException.class)
+    public CommonResult handleInnerException(InnerException e){
+        return new CommonResult().status(e.getCustomHttpStatus().getStatusCode()).message(e.getMessage());
     }
 
 }
