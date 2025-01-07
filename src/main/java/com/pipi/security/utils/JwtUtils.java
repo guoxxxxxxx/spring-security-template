@@ -8,11 +8,11 @@
 package com.pipi.security.utils;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -21,9 +21,9 @@ import java.util.UUID;
 @Slf4j
 public class JwtUtils {
 
-    private static final String SECRET_KEY = "ABCDEFG";
+    private static final String SECRET_KEY = "IJISDJIOSJIDJAIOJFIOASJDIOJASIODJIAO";
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7L;
-    private static final SecretKey KEY = Jwts.SIG.HS256.key().random(new SecureRandom(SECRET_KEY.getBytes(StandardCharsets.UTF_8))).build();
+//    private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
     /**
      * 创建token使用默认的过期时间
@@ -51,7 +51,7 @@ public class JwtUtils {
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(expirationTime + new Date().getTime()))
-                .signWith(KEY);
+                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)));
         jwtBuilder.header()
                 .add("typ", "JWT")
                 .add("alg", "HS256");
@@ -62,12 +62,12 @@ public class JwtUtils {
     /**
      * 解析token
      * @param token token
-     * @return
+     * @return token Claims
      */
     public static Claims parseToken(String token) {
         try {
             Jws<Claims> jws = Jwts.parser()
-                    .verifyWith(KEY)
+                    .verifyWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseSignedClaims(token);
             return jws.getPayload();

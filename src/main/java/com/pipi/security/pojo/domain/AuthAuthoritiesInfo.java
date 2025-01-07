@@ -8,6 +8,7 @@
 package com.pipi.security.pojo.domain;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@TableName("tb_auth_authorities")
 public class AuthAuthoritiesInfo {
 
     /**

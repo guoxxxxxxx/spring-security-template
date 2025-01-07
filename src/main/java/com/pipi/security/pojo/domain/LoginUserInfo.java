@@ -7,25 +7,26 @@
 
 package com.pipi.security.pojo.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Data
+
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tb_auth_user")
+@TableName("tb_auth_user")
 public class LoginUserInfo implements UserDetails, CredentialsContainer {
 
     /**
@@ -71,35 +72,55 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
     /**
      * 角色权限列表
      */
-    private String authorities;
+    @TableField(exist = false)
+    private String userAuthorities;
+
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountNonExpired;
+        return accountNonExpired == null ? true : accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return accountNonLocked;
+        return accountNonLocked == null ? true : accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
+        return credentialsNonExpired == null ? true : credentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return enable;
+        return enable == null ? true : enable;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
-        List<GrantedAuthority> authorityList = new ArrayList<>();
-        for (String authority : authorities.split(",")) {
-            authorityList.add(new SimpleGrantedAuthority(authority));
+        if (StringUtils.hasLength(userAuthorities)) {
+            List<GrantedAuthority> authorityList = new ArrayList<>();
+            for (String authority : userAuthorities.split(",")) {
+                authorityList.add(new SimpleGrantedAuthority(authority));
+            }
+            return authorityList;
         }
-        return authorityList;
+        else
+            return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public Long getRoleId(){
+        return roleId;
     }
 
     @Override

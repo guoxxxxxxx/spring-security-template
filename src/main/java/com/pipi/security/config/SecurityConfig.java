@@ -25,7 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.session.DisableEncodeUrlFilter;
+
 
 @EnableWebSecurity
 @Configuration
@@ -45,13 +45,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/auth/register").permitAll()
                                 .requestMatchers("/auth/test").permitAll()
+                                .requestMatchers("/auth/login").permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .userDetailsService(userDetailsService)
                 .formLogin(AbstractHttpConfigurer::disable)     // 禁用默认登录表单
                 .logout(LogoutConfigurer::permitAll)
         ;
-
         return http.build();
     }
 

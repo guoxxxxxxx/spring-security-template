@@ -7,12 +7,13 @@
 
 package com.pipi.security.pojo.domain;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 
 @Data
-@Table(name = "tb_auth_role")
+@TableName("tb_auth_role")
 public class AuthRoleInfo {
 
     /**

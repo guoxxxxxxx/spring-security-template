@@ -10,6 +10,7 @@ package com.pipi.security.controller;
 
 import com.pipi.security.aop.annotation.Logger;
 import com.pipi.security.common.CommonResult;
+import com.pipi.security.pojo.dto.LoginDTO;
 import com.pipi.security.pojo.dto.RegisterDTO;
 import com.pipi.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,13 @@ public class AuthorityController {
     public CommonResult register(@RequestBody RegisterDTO params){
         boolean status = userService.register(params);
         return new CommonResult().success().message("注册成功").data(status);
+    }
+
+
+    @PostMapping("/login")
+    @Logger("登录")
+    public CommonResult login(@RequestBody LoginDTO params){
+        String token = userService.login(params);
+        return new CommonResult().success().message("登录成功").data("token", token);
     }
 }

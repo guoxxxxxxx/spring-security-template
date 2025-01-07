@@ -49,7 +49,7 @@ public class CommonGlobalExceptionHandler {
      */
     @ExceptionHandler(CommonException.class)
     public CommonResult handleCommonException(CommonException e){
-        return new CommonResult().status(456).message(e.getMessage());
+        return new CommonResult().status(5000).message(e.getMessage());
     }
 
 
