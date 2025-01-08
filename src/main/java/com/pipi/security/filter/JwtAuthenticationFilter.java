@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // get token from header
         String token = request.getHeader("token");
-        if (StringUtils.hasLength(token)) {
+        if (!StringUtils.hasLength(token)) {
             String bearerToken = request.getHeader("Authorization");
             if (StringUtils.hasLength(bearerToken) && bearerToken.startsWith("Bearer ")) {
                 token = bearerToken.substring(7);
@@ -61,12 +61,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username;
             Claims claims = JwtUtils.parseToken(token);
             username = claims.getSubject();
-            String userDetailsString = stringRedisTemplate.opsForValue().get(RedisPrefix.LOGIN + username);
-            if (!StringUtils.hasLength(userDetailsString)){
+            String userToken = stringRedisTemplate.opsForValue().get(RedisPrefix.LOGIN_TOKEN + username);
+            if (!StringUtils.hasLength(userToken)){
                 logger.debug("current token maybe is expired.");
                 throw new ExpiredJwtException(null, null, "the token is expired");
             }
-            LoginUserInfo loginUserInfo = JSON.parseObject(userDetailsString, LoginUserInfo.class);
+            LoginUserInfo loginUserInfo = JSON.parseObject(JSON.toJSONString(claims), LoginUserInfo.class);
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(loginUserInfo
                     , loginUserInfo.getPassword(), loginUserInfo.getAuthorities()));
         }

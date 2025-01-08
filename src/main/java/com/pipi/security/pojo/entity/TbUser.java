@@ -68,8 +68,8 @@ public class TbUser {
     /**
      * 是否可用
      */
-    @Column(name = "enable", columnDefinition = "bool default 1")
-    private Boolean enable;
+    @Column(name = "enabled", columnDefinition = "bool default 1")
+    private Boolean enabled;
 
     /**
      * 删除位

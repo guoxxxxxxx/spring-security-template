@@ -12,9 +12,12 @@ import com.pipi.security.aop.annotation.Logger;
 import com.pipi.security.common.CommonResult;
 import com.pipi.security.pojo.dto.LoginDTO;
 import com.pipi.security.pojo.dto.RegisterDTO;
+import com.pipi.security.pojo.dto.TokenDTO;
 import com.pipi.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -44,5 +47,13 @@ public class AuthorityController {
     public CommonResult login(@RequestBody LoginDTO params){
         String token = userService.login(params);
         return new CommonResult().success().message("登录成功").data("token", token);
+    }
+
+
+    @PostMapping("/parseToken")
+    @Logger("解析用户token信息")
+    public CommonResult parseToken(@RequestBody TokenDTO params){
+        Map<String, Object> result = userService.parseToken(params.getToken());
+        return new CommonResult().success().data("token", result).message("解析成功");
     }
 }

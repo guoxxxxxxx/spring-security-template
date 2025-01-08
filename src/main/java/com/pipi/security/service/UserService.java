@@ -6,6 +6,8 @@ import com.pipi.security.pojo.domain.LoginUserInfo;
 import com.pipi.security.pojo.dto.LoginDTO;
 import com.pipi.security.pojo.dto.RegisterDTO;
 
+import java.util.Map;
+
 public interface UserService extends IService<LoginUserInfo> {
 
     /**
@@ -24,4 +26,11 @@ public interface UserService extends IService<LoginUserInfo> {
      * @return token
      */
     String login(LoginDTO params);
+
+    /**
+     * 解析用户token信息
+     * @param token token
+     * @return JSONString
+     */
+    Map<String, Object> parseToken(String token);
 }

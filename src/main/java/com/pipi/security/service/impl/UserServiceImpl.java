@@ -7,9 +7,11 @@
 
 package com.pipi.security.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pipi.security.constant.RedisPrefix;
 import com.pipi.security.exception.CommonException;
 import com.pipi.security.mapper.UserMapper;
 import com.pipi.security.pojo.domain.LoginUserInfo;
@@ -17,17 +19,24 @@ import com.pipi.security.pojo.dto.LoginDTO;
 import com.pipi.security.pojo.dto.RegisterDTO;
 import com.pipi.security.service.UserService;
 import com.pipi.security.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, LoginUserInfo> implements UserService {
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
 
     @Override
@@ -64,6 +73,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, LoginUserInfo> impl
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> map = objectMapper.convertValue(loginUserInfo, Map.class);
                 String token = JwtUtils.createToken(loginUserInfo.getUsername(), map);
+                stringRedisTemplate.opsForValue().set(RedisPrefix.LOGIN_TOKEN + loginUserInfo.getUsername(), token,
+                        JwtUtils.EXPIRATION_TIME, TimeUnit.MILLISECONDS);
                 return token;
             }
         }
@@ -71,5 +82,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, LoginUserInfo> impl
             throw new CommonException("当前用户未注册");
         }
         throw new CommonException("用户名或密码错误");
+    }
+
+
+    @Override
+    public Map<String, Object> parseToken(String token) {
+        Claims claims = JwtUtils.parseToken(token);
+        Map<String, Object> claimsMap = new HashMap<>(claims);
+        claimsMap.remove("password");
+        return claimsMap;
     }
 }

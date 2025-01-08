@@ -9,7 +9,7 @@ package com.pipi.security.constant;
 
 public enum RedisPrefix {
 
-    LOGIN("login:");
+    LOGIN_TOKEN("login_token:");
 
 
     private final String prefix;
@@ -18,7 +18,14 @@ public enum RedisPrefix {
         this.prefix = prefix;
     }
 
+
     public String getPrefix() {
+        return this.prefix;
+    }
+
+
+    @Override
+    public String toString() {
         return this.prefix;
     }
 }

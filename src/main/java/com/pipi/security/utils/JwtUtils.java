@@ -22,7 +22,7 @@ import java.util.UUID;
 public class JwtUtils {
 
     private static final String SECRET_KEY = "IJISDJIOSJIDJAIOJFIOASJDIOJASIODJIAO";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7L;
+    public static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7L;
 //    private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
     /**

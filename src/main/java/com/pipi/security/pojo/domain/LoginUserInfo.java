@@ -67,7 +67,7 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
     /**
      * 是否可用
      */
-    private Boolean enable;
+    private Boolean enabled;
 
     /**
      * 角色权限列表
@@ -93,7 +93,7 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
 
     @Override
     public boolean isEnabled() {
-        return enable == null ? true : enable;
+        return enabled == null ? true : enabled;
     }
 
     @Override
