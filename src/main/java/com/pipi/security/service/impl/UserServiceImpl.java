@@ -14,9 +14,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pipi.security.constant.RedisPrefix;
 import com.pipi.security.exception.CommonException;
 import com.pipi.security.mapper.UserMapper;
+import com.pipi.security.pojo.domain.AuthAuthoritiesInfo;
+import com.pipi.security.pojo.domain.AuthRoleInfo;
 import com.pipi.security.pojo.domain.LoginUserInfo;
 import com.pipi.security.pojo.dto.LoginDTO;
 import com.pipi.security.pojo.dto.RegisterDTO;
+import com.pipi.security.service.AuthAuthoritiesService;
+import com.pipi.security.service.AuthRoleService;
 import com.pipi.security.service.UserService;
 import com.pipi.security.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -28,8 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -37,6 +40,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, LoginUserInfo> impl
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    AuthRoleService authRoleService;
+
+    @Autowired
+    AuthAuthoritiesService authAuthoritiesService;
 
 
     @Override
@@ -70,8 +79,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, LoginUserInfo> impl
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             boolean matches = bCryptPasswordEncoder.matches(params.getPassword(), loginUserInfo.getPassword());
             if (matches) {
+
+                AuthRoleInfo roleInfo = authRoleService.getById(loginUserInfo.getRoleId());
+                loginUserInfo.setRoleName(roleInfo.getName());
+
+                List<String> authoritiesIdList = Arrays.asList(roleInfo.getAuthorities().split(","));
+                List<AuthAuthoritiesInfo> authoritiesObjList = authAuthoritiesService.list(new LambdaQueryWrapper<AuthAuthoritiesInfo>()
+                        .in(AuthAuthoritiesInfo::getId, authoritiesIdList));
+                List<String> authoritiesList = new ArrayList<>();
+                for(AuthAuthoritiesInfo e : authoritiesObjList) {
+                    authoritiesList.add(e.getName());
+                }
+                loginUserInfo.setAuthorities(authoritiesList);
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> map = objectMapper.convertValue(loginUserInfo, Map.class);
+                map.put("authorities", authoritiesList);
                 String token = JwtUtils.createToken(loginUserInfo.getUsername(), map);
                 stringRedisTemplate.opsForValue().set(RedisPrefix.LOGIN_TOKEN + loginUserInfo.getUsername(), token,
                         JwtUtils.EXPIRATION_TIME, TimeUnit.MILLISECONDS);

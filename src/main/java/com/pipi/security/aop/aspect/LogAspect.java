@@ -29,6 +29,7 @@ public class LogAspect {
     @Pointcut("@annotation(com.pipi.security.aop.annotation.Logger)")
     public void pointCut(){}
 
+
     @Around("pointCut()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
@@ -47,6 +48,7 @@ public class LogAspect {
                 request.getRequestURI(), request.getMethod(), request.getRemoteAddr(), joinPoint.getSignature().getDeclaringType().getName()
                         + "." + joinPoint.getSignature().getName(), joinPoint.getArgs());
     }
+
 
     @AfterReturning(pointcut = "pointCut()", returning = "result")
     public void doAfter(JoinPoint joinPoint, Object result){

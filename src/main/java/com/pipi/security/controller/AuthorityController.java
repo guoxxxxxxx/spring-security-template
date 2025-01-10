@@ -8,6 +8,7 @@
 package com.pipi.security.controller;
 
 
+import com.pipi.security.aop.annotation.Auth;
 import com.pipi.security.aop.annotation.Logger;
 import com.pipi.security.common.CommonResult;
 import com.pipi.security.pojo.dto.LoginDTO;
@@ -29,6 +30,7 @@ public class AuthorityController {
 
     @GetMapping("/test")
     @Logger("测试")
+    @Auth("READ")
     public CommonResult test(){
         return new CommonResult().success().message("测试成功！");
     }

@@ -3,7 +3,9 @@ package com.pipi.security.constant;
 
 public enum CustomHttpStatus {
 
-    ERROR_LOGIN(31501, "未检测到登录用户_前端需跳转到登录界面");     // 前端收到此编码的消息时, 自动跳转到登录界面
+    ERROR_LOGIN(31501, "未检测到登录用户_前端需跳转到登录界面"),    // 前端收到此编码的消息时, 自动跳转到登录界面
+    ACCESS_DENIED(31503, "当前用户无权访问")
+    ;
 
     private final Integer STATUS_CODE;
 

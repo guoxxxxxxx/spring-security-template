@@ -44,7 +44,7 @@ public class TbUser {
     /**
      * 角色
      */
-    @Column(name = "role_id")
+    @Column(name = "role_id", columnDefinition = "int4 default 3")
     private Long roleId;
 
     /**

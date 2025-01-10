@@ -23,6 +23,7 @@ import java.util.List;
 
 
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -37,11 +38,13 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
     /**
      * 用户名
      */
+    @Getter(AccessLevel.NONE)
     private String username;
 
     /**
      * 密码
      */
+    @Getter(AccessLevel.NONE)
     private String password;
 
     /**
@@ -52,28 +55,39 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
     /**
      * 账户是否未过期
      */
+    @Getter(AccessLevel.NONE)
     private Boolean accountNonExpired;
 
     /**
      * 账户是否未锁定
      */
+    @Getter(AccessLevel.NONE)
     private Boolean accountNonLocked;
 
     /**
      * 账户资质是否位未失效
      */
+    @Getter(AccessLevel.NONE)
     private Boolean credentialsNonExpired;
 
     /**
      * 是否可用
      */
+    @Getter(AccessLevel.NONE)
     private Boolean enabled;
 
     /**
      * 角色权限列表
      */
     @TableField(exist = false)
-    private String userAuthorities;
+    @Getter(AccessLevel.NONE)
+    private List<String> authorities;
+
+    /**
+     * 用户角色名称
+     */
+    @TableField(exist = false)
+    private String roleName;
 
 
     @Override
@@ -98,9 +112,9 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
-        if (StringUtils.hasLength(userAuthorities)) {
+        if (!authorities.isEmpty()) {
             List<GrantedAuthority> authorityList = new ArrayList<>();
-            for (String authority : userAuthorities.split(",")) {
+            for (String authority : authorities) {
                 authorityList.add(new SimpleGrantedAuthority(authority));
             }
             return authorityList;
@@ -119,9 +133,6 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
         return username;
     }
 
-    public Long getRoleId(){
-        return roleId;
-    }
 
     @Override
     public void eraseCredentials() {
