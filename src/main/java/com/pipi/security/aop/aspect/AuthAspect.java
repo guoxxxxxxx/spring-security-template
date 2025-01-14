@@ -60,14 +60,17 @@ public class AuthAspect {
         }
         Claims claims = JwtUtils.parseToken(token);
         List<String> authoritiesList = claims.get("authorities", List.class);
+        String roleName = claims.get("roleName", String.class);
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         Auth needAuthority = method.getAnnotation(Auth.class);
         String value = null;
+        String role = null;
         if (needAuthority != null){
             value = needAuthority.value();
+            role = needAuthority.role();
         }
-        if (authoritiesList.contains("SUPER") || authoritiesList.contains(value)) {
+        if (authoritiesList.contains("SUPER") || authoritiesList.contains(value) || roleName.equals(role)) {
             log.debug("Permission verification successful");
         }
         else {
